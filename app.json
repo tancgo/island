@@ -9,5 +9,6 @@
     "backgroundColor": "#eeeeee",
     "backgroundTextStyle": "light",
     "enablePullDownRefresh": true
-  }
+  },
+  "sitemapLocation": "sitemap38.json"
 }

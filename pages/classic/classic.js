@@ -1,20 +1,43 @@
-// pages/classic/classic.js
+import { getLatest } from '../../api/classic.js'
+import { like } from '../../api/like.js'
+
+// const classic = new ClassicModel();
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    classic: null,
+    likeCount: 0,
+    likeStatus: false
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: async function (options) {
+    const res = await getLatest();
 
+    if (res?.fav_nums) {
+      const { fav_nums, like_status } = res;
+      this.setData({
+        classic: res,
+        likeCount: fav_nums,
+        likeStatus: like_status
+      })
+    }
   },
 
+  onLike: function (event) {
+    console.log(event.detail);
+
+    const behavior = event.detail.behavior
+    const { id, type } = this.data.classic
+    // 发送点赞或者取消点赞请求
+    like(behavior, id, type)
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
