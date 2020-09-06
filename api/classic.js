@@ -6,4 +6,10 @@ const getLatest = () => {
   })
 }
 
-export { getLatest }
+const getClassic = (index, type) => {
+  return api.request({
+    url:`classic/${index}/${type}`
+  })
+}
+
+export { getLatest, getClassic }
