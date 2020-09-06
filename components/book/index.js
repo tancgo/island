@@ -4,7 +4,7 @@ Component({
    * 组件的属性列表
    */
   properties: {
-    book:Object,
+    book: Object,
   },
 
   /**
@@ -18,6 +18,14 @@ Component({
    * 组件的方法列表
    */
   methods: {
+    onTap(event) {
+      console.log(this.properties.book);
+      
+      const { id } = this.properties.book
 
+      wx.navigateTo({
+        url: `/pages/book-detail/book-detail?id=${id}`,
+      })
+    }
   }
 })

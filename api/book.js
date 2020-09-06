@@ -7,9 +7,27 @@ const getHotList = () => {
 }
 
 const getMyBookCount = () => {
-  return this.request({
+  return api.request({
     url: '/book/favor/count'
   })
 }
 
-export { getHotList, getMyBookCount }
+const getDetail = (id) => {
+  return api.request({
+    url: `book/${id}/detail`
+  })
+}
+
+const getLikeStatus = (id) => {
+  return api.request({
+    url: `book/${id}/favor`
+  })
+}
+
+const getComments = (id) => {
+  return api.request({
+    url: `book/${id}/short_comment`
+  })
+}
+
+export { getHotList, getMyBookCount, getDetail, getLikeStatus, getComments }
