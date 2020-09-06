@@ -33,6 +33,8 @@ Component({
     const year = date.getFullYear()
     const month = date.getMonth()
 
+    console.log(month, 'month');
+
     this.setData({
       year,
       month: this.data.months[month]

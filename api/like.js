@@ -15,4 +15,10 @@ const like = (behavior, artID, category) => {
   })
 }
 
-export { like }
+const getLikeStatus = (artID, category) => {
+  return api.request({
+    url: `classic/${category}/${artID}/favor`
+  })
+}
+
+export { like, getLikeStatus }

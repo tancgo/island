@@ -1,10 +1,5 @@
-import {
-  getLatest,
-  getClassic
-} from '../../api/classic.js'
-import {
-  like
-} from '../../api/like.js'
+import { getLatest, getClassic } from '../../api/classic.js'
+import { like, getLikeStatus } from '../../api/like.js'
 
 // const classic = new ClassicModel();
 
@@ -28,13 +23,11 @@ Component({
     const res = await getLatest();
 
     if (res && res.fav_nums) {
-      const {
-        fav_nums,
-        like_status,
-        index
-      } = res;
+      const { fav_nums, like_status, index } = res;
       // 存贮最新的index值
       wx.setStorageSync('latest', index)
+      // 数据写入缓存
+      wx.setStorageSync(this.getKey(index), res)
       this.setData({
         classic: res,
         likeCount: fav_nums,
@@ -48,10 +41,7 @@ Component({
       console.log(event.detail);
 
       const behavior = event.detail.behavior
-      const {
-        id,
-        type
-      } = this.data.classic
+      const { id, type } = this.data.classic
       // 发送点赞或者取消点赞请求
       like(behavior, id, type)
     },
@@ -64,17 +54,27 @@ Component({
       this.setClassic('next')
     },
 
-    setClassic: async function (type) {
-      const res = await getClassic(this.data.classic.index, type)
-      const {
-        fav_nums,
-        like_status,
-        index
-      } = res;
+    setClassic: async function (action) {
+      const {index: classicIndex} = this.data.classic
+      const key = action === 'next' ? this.getKey(classicIndex + 1) : this.getKey(classicIndex - 1)
+      // 缓存中寻找
+      const classic = wx.getStorageSync(key)
+
+      console.log(classic, 'isClassic');
+      // 存在时从缓存中取数据，不存在时请求接口数据
+      const res = !classic ? await getClassic(classicIndex, action) : wx.getStorageSync(key)
+      const { fav_nums, like_status, index, id, type } = res
+
+      // 获取like组件的点赞状态和数量
+      this._getLikeStatus(id, type)
+
+      // 缓存中不存在时则写入
+      if (!classic) wx.setStorageSync(this.getKey(index), res)
+
       this.setData({
         classic: res,
-        likeCount: fav_nums,
-        likeStatus: like_status,
+        // likeCount: fav_nums,
+        // likeStatus: like_status,
         latest: this.isLatest(index),
         first: this.isFirst(index)
       })
@@ -87,6 +87,25 @@ Component({
     isLatest(index) {
       const latestIndex = wx.getStorageSync('latest')
       return latestIndex == index ? true : false
+    },
+
+    getKey(index) {
+      const key = 'classic-' + index
+      return key
+    },
+
+    async _getLikeStatus(artID, category) {
+      const res = await getLikeStatus(artID, category)
+
+      if (res) {
+        const { fav_nums, like_status } = res
+
+        this.setData({
+          likeCount: fav_nums,
+          likeStatus: like_status
+        })
+      }
     }
+
   }
 })
