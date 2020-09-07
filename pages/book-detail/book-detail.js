@@ -18,8 +18,8 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: async function (options) {
+    wx.showLoading()
     const { id } = options;
-
     const detail = await getDetail(id)
     const comments = await getComments(id)
     const likeStatus = await getLikeStatus(id)
@@ -33,8 +33,8 @@ Page({
         // likeStatus: true,
         // likeCount: 12
       })
+      wx.hideLoading()
     })
-
   },
 
   onLike(event) {
