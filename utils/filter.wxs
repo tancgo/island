@@ -1,0 +1,16 @@
+// WXS 与 JavaScript 是不同的语言，有自己的语法，并不和 JavaScript 一致。
+// 不能用es6语法，大概和es5语法相同
+var format = function (text) {
+  if (!text) return;
+
+  // https://developers.weixin.qq.com/miniprogram/dev/reference/wxs/06datatype.html
+  // 正则语法有所不同
+  var reg = getRegExp('\\\\n', 'g')
+  return text.replace(reg, '\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+}
+
+var limit = function (array, length) {
+  return array.slice(0, length)
+}
+
+module.exports = { format: format, limit: limit }

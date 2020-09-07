@@ -30,4 +30,15 @@ const getComments = (id) => {
   })
 }
 
-export { getHotList, getMyBookCount, getDetail, getLikeStatus, getComments }
+const postComment = (id, comment) => {
+  return api.request({
+    url: 'book/add/short_comment',
+    method: 'POST',
+    data: {
+      book_id: id,
+      content: comment
+    }
+  })
+}
+
+export { getHotList, getMyBookCount, getDetail, getLikeStatus, getComments, postComment }

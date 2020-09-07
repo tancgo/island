@@ -1,4 +1,5 @@
-import { getDetail, getLikeStatus, getComments } from '../../api/book.js'
+import { getDetail, getLikeStatus, getComments, postComment } from '../../api/book.js'
+import { like } from '../../api/like.js'
 
 Page({
 
@@ -36,46 +37,56 @@ Page({
 
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+  onLike(event) {
+    const { behavior } = event.detail
+    // 发送点赞或者取消点赞请求
+    like(behavior, this.data.book.id, 400)
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
+  onFakePost() {
+    this.setData({
+      posting: true
+    })
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
+  onCancel() {
+    this.setData({
+      posting: false
+    })
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
+  async onPost(event) {
+    console.log(event.detail)
+    const comment = event.detail.text || event.detail.value
 
-  },
+    if (!comment) return
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
+    if (comment.length > 12) {
+      wx.showToast({
+        title: '短评最多12个字',
+        icon: 'none'
+      })
+      return
+    }
 
-  },
+    const res = await postComment(this.data.book.id, comment)
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
+    if (res) {
+      wx.showToast({
+        title: '+ 1',
+        icon: "none"
+      })
 
+      this.data.comments.unshift({
+        content: comment,
+        nums: 1
+      })
+
+      this.setData({
+        comments: this.data.comments,
+        posting: false
+      })
+    }
   },
 
   /**
