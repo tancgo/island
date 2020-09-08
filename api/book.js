@@ -6,6 +6,16 @@ const getHotList = () => {
   })
 }
 
+const search = (start, value) => {
+  return api.request({
+    url: 'book/search?summary=1',
+    data: {
+      q: value,
+      start: start
+    }
+  })
+}
+
 const getMyBookCount = () => {
   return api.request({
     url: '/book/favor/count'
@@ -41,4 +51,4 @@ const postComment = (id, comment) => {
   })
 }
 
-export { getHotList, getMyBookCount, getDetail, getLikeStatus, getComments, postComment }
+export { getHotList, getMyBookCount, getDetail, getLikeStatus, getComments, postComment, search }
