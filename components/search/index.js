@@ -6,7 +6,14 @@ Component({
    * 组件的属性列表
    */
   properties: {
+    more: Boolean
+  },
 
+  observers: {
+    'more': function (params) {
+      console.log(this.properties.more, 'observers');
+      
+    }
   },
 
   /**
@@ -43,8 +50,17 @@ Component({
       this.triggerEvent('cancel', {}, {})
     },
 
+    onDelete(event) {
+      console.log('onDelete')
+      this.setData({
+        searching: false,
+        value: null,
+        dataArray: []
+      })
+    },
+
     async onConfirm(event) {
-      const word = event.detail.value
+      const word = event.detail.value || event.detail.text
       this.setData({
         value: word,
         searching: true
@@ -57,6 +73,16 @@ Component({
         // 缓存有效关键字
         addToHistory(word)
       }
+    },
+
+    // 组件中的onReachBottom方法不会触发 需要触发page 页面中的onReachBottom
+    // onReachBottom() {
+    //   console.log('onReachBottom search')
+    // }
+    loadMore() {
+      console.log('loadMore');
+
     }
+
   }
 })
