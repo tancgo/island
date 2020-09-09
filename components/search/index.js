@@ -1,4 +1,3 @@
-// components/search/index.js
 import { search } from '../../api/book.js'
 import { getHot, getHistory, addToHistory } from '../../api/keyword.js'
 Component({
@@ -10,9 +9,17 @@ Component({
   },
 
   observers: {
-    'more': function (params) {
+    'more': async function (params) {
       console.log(this.properties.more, 'observers');
-      
+      const { dataArray, value } = this.data
+      if (!value) return;
+      const start = dataArray.length
+
+      const res = await search(start, value)
+
+      this.setData({
+        dataArray: dataArray.concat(res.books)
+      })
     }
   },
 
@@ -79,10 +86,9 @@ Component({
     // onReachBottom() {
     //   console.log('onReachBottom search')
     // }
-    loadMore() {
-      console.log('loadMore');
+    // async loadMore() {
+    //   console.log('loadMore');
 
-    }
-
+    // }
   }
 })
