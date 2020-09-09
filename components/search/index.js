@@ -11,14 +11,20 @@ Component({
   observers: {
     'more': async function (params) {
       console.log(this.properties.more, 'observers');
-      const { dataArray, value } = this.data
-      if (!value) return;
+      const { dataArray, value, loading } = this.data
+      if (!value || loading) return;
       const start = dataArray.length
+
+      // loading为锁的效果 避免重复请求
+      this.setData({
+        loading: true
+      })
 
       const res = await search(start, value)
 
       this.setData({
-        dataArray: dataArray.concat(res.books)
+        dataArray: dataArray.concat(res.books),
+        loading: false
       })
     }
   },
