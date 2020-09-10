@@ -1,9 +1,12 @@
 import { search } from '../../api/book.js'
 import { getHot, getHistory, addToHistory } from '../../api/keyword.js'
+import paginationBev from '../behaviors/pagination.js'
+
 Component({
   /**
    * 组件的属性列表
    */
+  behaviors: [paginationBev],
   properties: {
     more: Boolean
   },
@@ -13,13 +16,15 @@ Component({
       console.log(this.properties.more, 'observers');
       const { dataArray, value } = this.data
       if (!value) return;
-      const start = dataArray.length
+      // const start = dataArray.length
+      const start = this.getCurrentStart()
 
       const res = await search(start, value)
 
-      this.setData({
-        dataArray: dataArray.concat(res.books)
-      })
+      // this.setData({
+      //   dataArray: dataArray.concat(res.books)
+      // })
+      this.setMoreData(res.books)
     }
   },
 
@@ -32,8 +37,7 @@ Component({
     searching: false,
     value: '', // 搜索框中的文字
     loading: false,
-    loadingCenter: false,
-    dataArray: []
+    loadingCenter: false
   },
 
   async attached() {
@@ -74,9 +78,11 @@ Component({
       })
       const res = await search(0, word)
       if (res) {
-        this.setData({
-          dataArray: res.books
-        })
+        // this.setData({
+        //   dataArray: res.books
+        // })
+        this.setMoreData(res.books)
+        this.setTotal(res.total)
         // 缓存有效关键字
         addToHistory(word)
       }
