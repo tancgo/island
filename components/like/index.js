@@ -6,6 +6,7 @@ Component({
   properties: {
     like: Boolean,
     count: Number,
+    readOnly: Boolean
   },
 
   /**
@@ -22,6 +23,9 @@ Component({
    */
   methods: {
     onLike: function (event) {
+      if (this.properties.readOnly) {
+        return
+      }
       let {
         like,
         count

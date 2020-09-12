@@ -18,7 +18,7 @@ const search = (start, value) => {
 
 const getMyBookCount = () => {
   return api.request({
-    url: '/book/favor/count'
+    url: 'book/favor/count'
   })
 }
 

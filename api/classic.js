@@ -8,8 +8,20 @@ const getLatest = () => {
 
 const getClassic = (index, type) => {
   return api.request({
-    url:`classic/${index}/${type}`
+    url: `classic/${index}/${type}`
   })
 }
 
-export { getLatest, getClassic }
+const getMyFavor = () => {
+  return api.request({
+    url: 'classic/favor'
+  })
+}
+
+const getById = (id, type) => {
+  return api.request({
+    url: `classic/${type}/${id}`
+  })
+}
+
+export { getLatest, getClassic, getMyFavor, getById }

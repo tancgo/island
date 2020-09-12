@@ -1,4 +1,4 @@
-import { getLatest, getClassic } from '../../api/classic.js'
+import { getLatest, getClassic, getById } from '../../api/classic.js'
 import { like, getLikeStatus } from '../../api/like.js'
 
 // const classic = new ClassicModel();
@@ -8,6 +8,10 @@ Component({
   /**
    * 页面的初始数据
    */
+  properties: {
+    cid: Number,
+    type: Number
+  },
   data: {
     classic: null,
     likeCount: 0,
@@ -19,20 +23,31 @@ Component({
   /**
    * 生命周期函数--监听页面加载
    */
-  attached: async function (options) {
-    const res = await getLatest();
+  lifetimes: {
+    attached: async function (options) {
+      const { cid, type } = this.properties
+      console.log(cid, type, this.properties, 'attached');
 
-    if (res && res.fav_nums) {
-      const { fav_nums, like_status, index } = res;
-      // 存贮最新的index值
-      wx.setStorageSync('latest', index)
-      // 数据写入缓存
-      wx.setStorageSync(this.getKey(index), res)
-      this.setData({
-        classic: res,
-        likeCount: fav_nums,
-        likeStatus: like_status
-      })
+      let res;
+      if (!cid) {
+        res = await getLatest();
+      } else {
+        res = await getById(cid, type)
+      }
+
+
+      if (res && res.fav_nums) {
+        const { fav_nums, like_status, index } = res;
+        // 存贮最新的index值
+        wx.setStorageSync('latest', index)
+        // 数据写入缓存
+        wx.setStorageSync(this.getKey(index), res)
+        this.setData({
+          classic: res,
+          likeCount: fav_nums,
+          likeStatus: like_status
+        })
+      }
     }
   },
 
@@ -55,7 +70,7 @@ Component({
     },
 
     setClassic: async function (action) {
-      const {index: classicIndex} = this.data.classic
+      const { index: classicIndex } = this.data.classic
       const key = action === 'next' ? this.getKey(classicIndex + 1) : this.getKey(classicIndex - 1)
       // 缓存中寻找
       const classic = wx.getStorageSync(key)
